@@ -1,0 +1,11 @@
+{
+  "name": "run",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "jquery": "~ 2.1.4",
+    "angular": "~1.5",
+    "lodash": "~3.10.1",
+    "angular-ui-router": "~0.2.15",
+  }
+}

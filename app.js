@@ -5,7 +5,6 @@ let express = require('express'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    routes = require('./routes/index'),
     users = require('./routes/users'),
     config = require('config'),
     log = require('./libs/logs')(module),
@@ -30,7 +29,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 log.info(123);
 
-app.use('/', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

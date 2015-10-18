@@ -8,7 +8,7 @@ let gulp = require('gulp'),
 gulp.task('default', () => {
     //js
     gulp.src([
-        './public/js/base.js',
+        './public/js/base/*.js',
         './public/js/modules/**/*.js',
         './public/js/modules/**/**/*.js'
     ])

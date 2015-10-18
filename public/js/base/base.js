@@ -3,5 +3,5 @@
  */
 !function (angular) {
     "use strict";
-    angular.module('app', ['SignIn']);
+    angular.module('app', ['ui.router', 'SignIn']);
 }(angular);

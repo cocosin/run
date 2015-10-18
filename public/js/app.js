@@ -29,7 +29,8 @@
         '$parseProvider',
         '$urlRouterProvider',
         'CONSTS',
-        function ($stateProvider, $parseProvider, $urlRouterProvider, CONSTS) {
+        '$locationProvider',
+        function ($stateProvider, $parseProvider, $urlRouterProvider, CONSTS, $locationProvider) {
 
             $urlRouterProvider.otherwise(function($injector) {
                 //var isLogged = $injector.invoke(['Authentication', function(Authentication) {
@@ -48,12 +49,32 @@
                     }
                 });
 
+            $locationProvider.html5Mode({
+                enabled: true,
+                requireBase: false
+            });
+
         }
     ]);
 }(angular);
 !function (angular) {
     "use strict";
+    angular.module('Auth', []);
+}(angular);
+
+!function (angular) {
+    "use strict";
     angular.module('SignIn', []);
+}(angular);
+
+!function (angular) {
+    "use strict";
+    angular.module('Auth').provider('auth', [
+            function () {
+                // auth methods must be here
+            }
+        ]
+    );
 }(angular);
 
 !function (angular) {

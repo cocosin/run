@@ -5,7 +5,8 @@
         '$parseProvider',
         '$urlRouterProvider',
         'CONSTS',
-        function ($stateProvider, $parseProvider, $urlRouterProvider, CONSTS) {
+        '$locationProvider',
+        function ($stateProvider, $parseProvider, $urlRouterProvider, CONSTS, $locationProvider) {
 
             $urlRouterProvider.otherwise(function($injector) {
                 //var isLogged = $injector.invoke(['Authentication', function(Authentication) {
@@ -23,6 +24,11 @@
                         }
                     }
                 });
+
+            $locationProvider.html5Mode({
+                enabled: true,
+                requireBase: false
+            });
 
         }
     ]);

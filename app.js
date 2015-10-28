@@ -35,7 +35,7 @@ app.get('/err',function(req,res) {
     res.render('error');
 });
 
-app.get('*',function(req,res) {
+app.get(['/signin','/test'],function(req,res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 

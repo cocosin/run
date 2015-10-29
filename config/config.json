@@ -6,6 +6,7 @@
     "database": "rn",
     "user": "qostya",
     "password": "1234"
-  }
+  },
+  "urls": ["/", "/signin", "/test", "/users"]
 }
 

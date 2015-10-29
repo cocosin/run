@@ -1,9 +1,18 @@
-var express = require('express');
-var router = express.Router();
+"use strict";
+let express = require('express'),
+    router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index');
+let users = require('users'),
+    config = require('config');
+
+router.get(config.get('urls'), function(req,res) {
+  res.sendFile(__base + '/public/index.html');
 });
+
+router.get('/err',function(req,res) {
+  res.render('error');
+});
+
+router.use(users);
 
 module.exports = router;

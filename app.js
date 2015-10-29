@@ -5,11 +5,11 @@ let express = require('express'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    users = require('./routes/users'),
-    config = require('config'),
     log = require('./libs/logs')(module),
     app = express();
 
+let routes = require('./routes/index'),
+    config = require('config');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -25,25 +25,11 @@ if (app.get('env') === 'development') {
 app.use(bodyParser.json())
    .use(bodyParser.urlencoded({ extended: false }))
    .use(cookieParser())
-   .use(express.static(path.join(__dirname, 'public')));
-
-app.engine('.html', function (err) {
-    if (err) throw err;
-});
-
-app.get('/err',function(req,res) {
-    res.render('error');
-});
-
-app.get(['/signin','/test'],function(req,res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
+   .use(express.static(path.join(__dirname, 'public')))
+   .use('/', routes);
 
 log.info('started on 3000');
 
-// error handlers
-
-// development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
@@ -65,5 +51,6 @@ app.use(function(err, req, res, next) {
     });
 });
 
+global.__base = __dirname + '/';
 
 module.exports = app;

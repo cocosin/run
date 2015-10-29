@@ -1,12 +1,14 @@
 "use strict";
 let express = require('express'),
-    router = express.Router(),
-    app = express();
-
+    router = express.Router();
 
 /* GET users listing. */
-app.get('/users', (req, res) => {
+router.get('/users', (req, res) => {
     res.send('respond with a resource');
+});
+
+router.post('/users', (req, res) => {
+    console.log(req.body);
 });
 
 module.exports = router;

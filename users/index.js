@@ -1,6 +1,6 @@
-let database = require('database');
+/*let database = require('database');
 
-let User = database.define('user', {
+let User = database.define('Users', {
     id: {
         type: Sequelize.INTEGER,
         unique: true,
@@ -19,6 +19,12 @@ let User = database.define('user', {
     },
     age: {
         type: Sequelize.INTEGER(2)
+    },
+    birth_date: {
+        type: Sequelize.INTEGER,
+        validation: {
+            isDate: true
+        }
     },
     email: {
         type: Sequelize.STRING(30),
@@ -52,10 +58,13 @@ let User = database.define('user', {
         validate: {
             is: /^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/
         }
+    },
+    role: {
+        type: Sequelize.STRING
     }
 }, {
     freezeTableName: true // Model tableName will be the same as the model name
 });
 
 
-module.exports = router;
+module.exports = router;*/

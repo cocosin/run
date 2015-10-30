@@ -3,10 +3,19 @@
   "pg": {
     "host": "localhost",
     "port": "5432",
-    "database": "rn",
+    "database": "run",
     "user": "qostya",
     "password": "1234"
   },
-  "urls": ["/", "/signin", "/test", "/users"]
+  "urls": ["/", "/signin", "/test", "/users"],
+  "session": {
+    "secret": "secret_key",
+    "key": "cid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
+  }
 }
 

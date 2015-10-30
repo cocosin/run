@@ -1,18 +1,15 @@
 "use strict";
 let express = require('express'),
     router = express.Router(),
-    users = require('./users');
-
-
+    database = require('database');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/users', (req, res) => {
     res.send('respond with a resource');
 });
 
-router.post('/', function(req, res) {
-    console.log(req,res);
+router.post('/users', (req, res) => {
+    console.log(req.body);
 });
-
 
 module.exports = router;

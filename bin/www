@@ -3,11 +3,12 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
+var rootpath = require('rootpath')();
+var app = require('app');
 var debug = require('debug')('run:server');
 var http = require('http');
 var config = require('config');
+var path = require('path');
 
 /**
  * Get port from environment and store in Express.

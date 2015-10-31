@@ -2,11 +2,10 @@
 // различные справочнки
 "use strict";
 let path = require('path');
-
-let countries = JSON.parse(path.join(__dirname, 'countries.json')),
-    cities = JSON.parse(path.join(__dirname, 'cities.json'));
+let countries = require('./countries.json');
+let cities = require('./cities.json');
 
 module.exports = {
-    countries,
-    cities
+    cities,
+    countries
 };

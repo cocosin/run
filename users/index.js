@@ -1,33 +1,13 @@
 "use strict";
 let Sequelize = require('sequelize'),
     _ = require('lodash'),
-    rootpath = require('rootpath')();
+    rootpath = require('rootpath')(),
+    bcrypt = require('bcryptjs')
 
 let database = require('database'),
     dictionaries = require('dictionaries');
 
 let User = database.define('Users', {
-    first_name: {
-        type: Sequelize.STRING(20),
-        allowNull: false,
-        field: 'first_name'
-    },
-    last_name: {
-        type: Sequelize.STRING(20),
-        allowNull: false,
-        field: 'last_name'
-    },
-    age: {
-        type: Sequelize.INTEGER,
-        field: 'age'
-    },
-    birth_date: {
-        type: Sequelize.INTEGER,
-        validation: {
-            isDate: true
-        },
-        field: 'birth_date'
-    },
     email: {
         type: Sequelize.STRING(30),
         allowNull: false,
@@ -46,6 +26,45 @@ let User = database.define('Users', {
             len: [3, 15]
         },
         field: 'login'
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        set (val) {
+            let salt = bcrypt.genSaltSync(10),
+                hash = bcrypt.hashSync(val, salt);
+
+            this.setDataValue('password', hash);
+        }
+    },
+    first_name: {
+        type: Sequelize.STRING(20),
+        field: 'first_name',
+        validate: {
+            is: /^[a-zA-Zа-яА-ЯёЁ'][a-zA-Z-а-яА-ЯёЁ' ]+[a-zA-Zа-яА-ЯёЁ']?$/
+        }
+    },
+    last_name: {
+        type: Sequelize.STRING(20),
+        field: 'last_name'
+    },
+    age: {
+        type: Sequelize.INTEGER,
+        field: 'age',
+        validate: {
+            max: 90,
+            min: 13
+        }
+    },
+    birth_date: {
+        type: Sequelize.STRING(15),
+        allowNull: true,
+        validate: {
+            //isDate: true,
+            //isAfter:  new Date().setFullYear(new Date().getFullYear() - 91),    // only allow date strings after a specific date
+            //isBefore: new Date().setFullYear(new Date().getFullYear() - 13)     // only allow date strings before a specific date
+        },
+        field: 'birth_date'
     },
     country: {
         type: Sequelize.STRING(25),
@@ -86,57 +105,80 @@ let User = database.define('Users', {
     freezeTableName: true // Model tableName will be the same as the model name
 });
 
-var databaseSync = database.sync();
+var databaseSync = database.sync({force:true}),
+    usersMethods = {
+        saveUsersInfo (values) {
+            let selectedCountry = _.find(dictionaries.countries, (item) => {
+                return item.title === _.trim(values.country);
+            }),
+                selectedCity = _.find(dictionaries.cities, (item) => {
+                    return item.title === _.trim(values.city);
+                });
+
+            let customizedValues = {
+                first_name: values.first_name ? _.capitalize(values.first_name.toLowerCase()) : null,
+                last_name: values.last_name ? _.capitalize(values.last_name.toLowerCase()) : null,
+                password: values.password,
+                age: (+values.age) ? (+values.age) : null,
+                birth_date: _.isDate(new Date(values.birth_date)) ? values.birth_date : null,
+                email: values.email ? values.email.toLowerCase() : null,
+                login: values.login.toLowerCase(),
+                country: values.country ? _.trim(values.country) : null,
+                country_code: selectedCountry ? selectedCountry.code : null, // для удобной работы справочников
+                city: selectedCity ? selectedCity.code : null,
+                phone: values.phone ? values.phone.toString() : null,
+                gender: values.gender ? values.gender.toLowerCase() : null,
+                area: values.area,
+                role: values.role  // роль в этом сервисе
+            };
+
+            return databaseSync.then(
+                () => {
+                    // после подключения к базе
+                    return User.create(customizedValues)
+                }
+            );
+        },
+        saveUsersBasicInfo (values) {
+            let customizedValues = {
+                email: values.email,
+                login: values.login,
+                password: values.password,
+                age: values.age,
+                country: values.country,
+                city: values.city
+            };
+            this.saveUsersInfo(customizedValues);
+        },
+        saveAdditionalInfo (userId, values) {
+            return this.saveUsersBasicInfo().then(
+                (data) => {
+                    return User.update(
+                        values,
+                        {
+                            where: {
+                                id: userId
+                            }
+                        }
+                    );
+                }
+            );
+        }
+    };
+
+usersMethods.saveUsersBasicInfo(
+    {
+        email: "test@test.ru",
+        login: 'qostya',
+        password: "qweqwe123",
+        age: 15,
+        country: "RU",
+        city: "spb"
+    }
+);
 
 // TODO: создать несколько фунций для сохранения данных в БД
 
 
-var saveUsersBasicInfo = (values) => {
-    let selectedCountry = _.find(dictionaries.countries, (item) => {
-        return item.title === _.trim(values.country);
-    });
 
-    let customizedValues = {
-        first_name: values.first_name,
-        last_name: values.last_name,
-        age: (+values.age) ? (+values.age) : null,
-        birth_date: _.isDate(new Date(values.birth_date)),
-        email: values.email,
-        login: values.login.toLowerCase(),
-        country: values.country ? _.trim(values.country) : null,
-        country_code: selectedCountry ? selectedCountry.code : null,
-        city: values.city,
-        phone: values.phone ? values.phone.toString() : null,
-        gender: values.gender ? values.gender.toLowerCase() : null,
-        area: values.area,
-        role: values.role
-    };
-
-    return databaseSync.then(
-        () => {
-            return User.create(customizedValues)
-        }
-    );
-};
-
-var saveAdditionalInfo = (userId, values) => {
-    return saveUsersBasicInfo().then(
-        (data) => {
-            return User.update(
-                values,
-                {
-                    where: {
-                        id: userId
-                    }
-                }
-            );
-        }
-    );
-};
-
-
-
-module.exports = {
-    saveUsersBasicInfo,
-
-};
+module.exports = usersMethods;

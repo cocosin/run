@@ -10,10 +10,4 @@ let sequelize = new Sequelize(config.get('pg:database'), config.get('pg:user'), 
     port: config.get('pg:port')
 });
 
-sequelize.sync({force: true}).then(
-    (items) => {
-        console.log(items);
-    }
-);
-
 module.exports = sequelize;

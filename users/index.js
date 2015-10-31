@@ -1,4 +1,7 @@
-/*let database = require('database');
+"use strict";
+let Sequelize = require('sequelize');
+
+let database = require('database');
 
 let User = database.define('Users', {
     id: {
@@ -18,7 +21,7 @@ let User = database.define('Users', {
         allowNull: false
     },
     age: {
-        type: Sequelize.INTEGER(2)
+        type: Sequelize.INTEGER
     },
     birth_date: {
         type: Sequelize.INTEGER,
@@ -66,5 +69,11 @@ let User = database.define('Users', {
     freezeTableName: true // Model tableName will be the same as the model name
 });
 
+database.sync({force: true}).then(
+    (items) => {
+        console.log(items);
+    }
+);
+// TODO: создать несколько фунций для сохранения данных в БД
 
-module.exports = router;*/
+module.exports = database;

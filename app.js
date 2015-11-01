@@ -4,7 +4,7 @@ let express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
-    cookieSession = require('cookie-session'),
+    auth = require('users/auth'),
     bodyParser = require('body-parser'),
     log = require('./libs/logs')(module),
     app = express();
@@ -13,20 +13,22 @@ let routes = require('./routes/index'),
     config = require('config');
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
-   .set('view engine', 'hbs');
+app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 if (app.get('env') === 'development') {
+    app.set('trust proxy', 1);
     app.use(logger('dev'));
 } else {
     app.use(logger('default'));
 }
-app.use(cookieSession({
-    name: 'session',
-    keys: ['test1', 'test2']
-}))
+app.use(auth.currentSession)
+    .use(function (req, res, next) {
+        // Update views
+        console.log(req.session);
+        next();
+    })
    .use(bodyParser.json())
    .use(bodyParser.urlencoded({ extended: false }))
    .use(cookieParser())

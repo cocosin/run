@@ -1,11 +1,12 @@
 "use strict";
 let express = require('express'),
     router = express.Router(),
-    rootpath = require('rootpath')(),
-    settings = require('settings');
+    rootpath = require('rootpath')();
 
 let users = require('routes/users'),
-    config = require('config');
+    config = require('config'),
+    auth = require('users/auth'),
+    settings = require('settings');
 
 
 router.get(config.get('urls'), function(req,res) {
@@ -13,8 +14,11 @@ router.get(config.get('urls'), function(req,res) {
 });
 
 router.get('/err',function(req,res) {
-  res.render('error');
+    req.session.authorized = true;
+    res.render('error');
 });
+
+router.get('/logout', auth.logout);
 
 router.use(users);
 

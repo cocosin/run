@@ -105,7 +105,7 @@ let User = database.define('Users', {
     freezeTableName: true // Model tableName will be the same as the model name
 });
 
-var databaseSync = database.sync({force:true}),
+var databaseSync = database.sync(),
     usersMethods = {
         saveUsersInfo (values) {
             let selectedCountry = _.find(dictionaries.countries, (item) => {
@@ -166,7 +166,7 @@ var databaseSync = database.sync({force:true}),
         }
     };
 
-usersMethods.saveUsersBasicInfo(
+/*usersMethods.saveUsersBasicInfo(
     {
         email: "test@test.ru",
         login: 'qostya',
@@ -175,7 +175,7 @@ usersMethods.saveUsersBasicInfo(
         country: "RU",
         city: "spb"
     }
-);
+);*/
 
 // TODO: создать несколько фунций для сохранения данных в БД
 

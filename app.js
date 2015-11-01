@@ -4,6 +4,7 @@ let express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
+    cookieSession = require('cookie-session'),
     bodyParser = require('body-parser'),
     log = require('./libs/logs')(module),
     app = express();
@@ -22,7 +23,11 @@ if (app.get('env') === 'development') {
 } else {
     app.use(logger('default'));
 }
-app.use(bodyParser.json())
+app.use(cookieSession({
+    name: 'session',
+    keys: ['test1', 'test2']
+}))
+   .use(bodyParser.json())
    .use(bodyParser.urlencoded({ extended: false }))
    .use(cookieParser())
    .use(express.static(path.join(__dirname, 'public')))

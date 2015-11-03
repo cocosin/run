@@ -6,14 +6,24 @@ let express = require('express'),
 let users = require('routes/users'),
     config = require('config'),
     auth = require('users/auth'),
-    settings = require('settings');
+    settings = require('settings'),
+    passport = auth.passport;
 
 
-router.get(config.get('urls'), function(req,res) {
+router.post('/login',
+    passport.authenticate('local', { successRedirect: '/err',
+        failureRedirect: '/logout',
+        failureFlash: true })
+);
+
+router.get(config.get('urls'), function(req, res) {
+    if (req.user) {
+        console.log('user is here!');
+    }
   res.sendFile(settings.root_path + 'public/index.html');
 });
 
-router.get('/err',function(req,res) {
+router.get('/err', (req,res) => {
     req.session.authorized = true;
     res.render('error');
 });

@@ -107,6 +107,7 @@ let User = database.define('Users', {
 
 var databaseSync = database.sync(),
     usersMethods = {
+        User,
         saveUsersInfo (values) {
             let selectedCountry = _.find(dictionaries.countries, (item) => {
                 return item.title === _.trim(values.country);
@@ -166,12 +167,13 @@ var databaseSync = database.sync(),
         }
     };
 
+
 /*usersMethods.saveUsersBasicInfo(
     {
-        email: "test@test.ru",
-        login: 'qostya',
-        password: "qweqwe123",
-        age: 15,
+        email: "kkk@kkk.ru",
+        login: 'kkk',
+        password: "kkkk",
+        age: 20,
         country: "RU",
         city: "spb"
     }

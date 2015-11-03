@@ -7,7 +7,8 @@ let express = require('express'),
     auth = require('users/auth'),
     bodyParser = require('body-parser'),
     log = require('./libs/logs')(module),
-    app = express();
+    app = express(),
+    passport = auth.passport;
 
 let routes = require('./routes/index'),
     config = require('config');
@@ -26,19 +27,21 @@ if (app.get('env') === 'development') {
 app.use(auth.currentSession)
     .use(function (req, res, next) {
         // Update views
-        console.log(req.session);
         next();
     })
    .use(bodyParser.json())
    .use(bodyParser.urlencoded({ extended: false }))
    .use(cookieParser())
    .use(express.static(path.join(__dirname, 'public')))
+   .use(passport.initialize())
+   .use(passport.session())
    .use('/', routes);
 
 log.info('started on 3000');
 
 // will print stacktrace
 if (app.get('env') === 'development') {
+    app.set('trust proxy', 1);
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {

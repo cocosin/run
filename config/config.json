@@ -7,7 +7,7 @@
     "user": "qostya",
     "password": "1234"
   },
-  "urls": ["/", "/signin", "/test", "/users"],
+  "urls": ["/", "/signin", "/test"],
   "session": {
     "secret": "secret_key",
     "key": "cid",

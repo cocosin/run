@@ -6,17 +6,22 @@
         <input type="text" name="lname"/><br/>
         <input type="submit"/>
     </form-->
-    <form action="/login" method="post">
+    <form>
+        <input type="text" ng-model="currUrl"/>
         <div>
             <label>Username:</label>
-            <input type="text" name="username"/>
+            <input type="text" ng-model="params.login" name="username"/>
         </div>
         <div>
             <label>Password:</label>
-            <input type="password" name="password"/>
+            <input type="password" ng-model="params.password" name="password"/>
         </div>
         <div>
-            <input type="submit" value="Log In"/>
+            <button type="button" ng-click="sendSignIn()">Отправить</button>
+        </div>
+
+        <div>
+            <h4>{{messages}}</h4>
         </div>
     </form>
 </div>

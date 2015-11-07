@@ -10,11 +10,16 @@ let users = require('routes/users'),
     passport = auth.passport;
 
 
-router.post('/login',
-    passport.authenticate('local', { successRedirect: '/err',
-        failureRedirect: '/logout',
-        failureFlash: true })
-);
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        console.log(err, user, info);
+
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.send(user);
+        });
+    })(req, res, next);
+});
 
 router.get(config.get('urls'), function(req, res) {
     if (req.user) {

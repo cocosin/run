@@ -2,7 +2,7 @@
 let Sequelize = require('sequelize'),
     _ = require('lodash'),
     rootpath = require('rootpath')(),
-    bcrypt = require('bcryptjs')
+    bcrypt = require('bcryptjs');
 
 let database = require('database'),
     dictionaries = require('dictionaries');
@@ -27,14 +27,14 @@ let User = database.define('Users', {
         },
         field: 'login'
     },
-    password: {
+    pass_hash: {
         type: Sequelize.STRING,
         allowNull: false,
         set (val) {
             let salt = bcrypt.genSaltSync(10),
                 hash = bcrypt.hashSync(val, salt);
 
-            this.setDataValue('password', hash);
+            this.setDataValue('pass_hash', hash);
         }
     },
     first_name: {
@@ -108,6 +108,7 @@ let User = database.define('Users', {
 var databaseSync = database.sync(),
     usersMethods = {
         User,
+        databaseSync,
         saveUsersInfo (values) {
             let selectedCountry = _.find(dictionaries.countries, (item) => {
                 return item.title === _.trim(values.country);
@@ -119,7 +120,7 @@ var databaseSync = database.sync(),
             let customizedValues = {
                 first_name: values.first_name ? _.capitalize(values.first_name.toLowerCase()) : null,
                 last_name: values.last_name ? _.capitalize(values.last_name.toLowerCase()) : null,
-                password: values.password,
+                pass_hash: values.pass_hash,
                 age: (+values.age) ? (+values.age) : null,
                 birth_date: _.isDate(new Date(values.birth_date)) ? values.birth_date : null,
                 email: values.email ? values.email.toLowerCase() : null,
@@ -144,7 +145,7 @@ var databaseSync = database.sync(),
             let customizedValues = {
                 email: values.email,
                 login: values.login,
-                password: values.password,
+                pass_hash: values.pass_hash,
                 age: values.age,
                 country: values.country,
                 city: values.city
@@ -168,12 +169,25 @@ var databaseSync = database.sync(),
     };
 
 
+User.findOne(
+    {
+        where: {
+            login: 'qostya'
+        },
+        attributes: ['id', 'login', 'pass_hash']
+    }
+).then(
+    (data) => {
+        console.log(data);
+    }
+);
+
 /*usersMethods.saveUsersBasicInfo(
     {
-        email: "kkk@kkk.ru",
-        login: 'kkk',
-        password: "kkkk",
-        age: 20,
+        email: "ooo@qq.ru",
+        login: 'ooo',
+        pass_hash: "1234",
+        age: 21,
         country: "RU",
         city: "spb"
     }

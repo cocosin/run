@@ -13,20 +13,12 @@ let usersMethods = require('users/index'),
     log = require('libs/logs')(module),
     User = usersMethods.User,
     database = require('database'),
-    databaseSync = database.sync();
+    databaseSync = usersMethods.databaseSync;
 
 let currentSession = session({
     name: 'user_session',
-    secret: '__1',
-    maxAge: 1000*60*60*24*14,
-    store: new MongoStore({
-        url: 'mongodb://localhost/user-sessions',
-        ttl: 24 * 24 * 60 * 60,
-        autoRemove: 'interval',
-        autoRemoveInterval: 60*24*14
-    }),
-    cookie: {
-    }
+    secret: '__12',
+    maxAge: 1000*60*60*24*14
 });
 
 let logout = (req, res) => {
@@ -35,14 +27,25 @@ let logout = (req, res) => {
 };
 
 passport.serializeUser(function(user, done) {
-    done(null, user.dataValues.login);
+    console.log(user, 2);
+
+    if (!user) {
+        return done(null, false);
+    }
+
+    done(null, user.login);
 });
 
 passport.deserializeUser(function(login, done) {
-    User.find({login}).then(
+    console.log(login);
+    User.findOne({where:{login}}).then(
         (user) => {
-            console.log('deserialized!111');
-            done(null, user);
+            console.log(user, 1);
+            done(null, {
+                id: user.dataValues.id,
+                login: user.dataValues.login,
+                email: user.dataValues.email
+            });
         },
         () => {
             console.log('ошибка при десериализации');
@@ -50,20 +53,32 @@ passport.deserializeUser(function(login, done) {
 });
 
 passport.use(new LocalStrategy(
-    function(username, password, done) {
-        User.find({ login: username }).then(
+    function(login, password, done) {
+        console.log(login);
+        User.findOne(
+            {
+                where: {
+                    login
+                },
+                attributes: ['id', 'email', 'login', 'pass_hash']
+            }
+        ).then(
             (user) => {
-
-                bcrypt.compare(password, user.dataValues.password, function(err, res) {
-                    console.log(err, res, user.dataValues.password, password);
-                });
-
-                if (!password) {
+                console.log(login, password, user.dataValues);
+                if (password !== user.dataValues.pass_hash) {
                     console.log('password error');
-                    return done(null, false, { message: 'Incorrect password.' });
+                    //return done(null, user);
+                    return done(null, 0, { message: 'Incorrect password.' });
                 }
 
-                return done(null, user);
+                console.log('password success');
+                return done(null, {
+                    id: user.dataValues.id,
+                    login: user.dataValues.login,
+                    email: user.dataValues.email
+                });
+
+
         }, (err) =>{
                 if (err) log.info(err);
             }

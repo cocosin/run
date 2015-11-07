@@ -8,7 +8,8 @@ let express = require('express'),
     bodyParser = require('body-parser'),
     log = require('./libs/logs')(module),
     app = express(),
-    passport = auth.passport;
+    passport = auth.passport,
+    flash = require('connect-flash');
 
 let routes = require('./routes/index'),
     config = require('config');
@@ -25,6 +26,7 @@ if (app.get('env') === 'development') {
     app.use(logger('default'));
 }
 app.use(auth.currentSession)
+    .use(flash())
     .use(function (req, res, next) {
         // Update views
         next();
